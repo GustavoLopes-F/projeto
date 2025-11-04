@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Agendamento de Exames</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background-color: #2e89ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #1c6de0;
+        }
+
+        #resultado {
+            max-width: 500px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📅 Novo Agendamento</h1>
+
+    <form id="formAgendamento">
+        <label>Nome do paciente</label>
+        <input type="text" id="paciente" required>
+
+        <label>Telefone (com DDD)</label>
+        <input type="text" id="telefone" placeholder="ex: 51999999999" required>
+
+        <label>Data</label>
+        <input type="date" id="data" required>
+
+        <label>Hora</label>
+        <input type="time" id="hora" required>
+
+        <label>Local</label>
+        <input type="text" id="local" required>
+
+        <label>Exame</label>
+        <input type="text" id="exame">
+
+        <label>Tipo de exame</label>
+        <input type="text" id="tipoexame">
+
+        <button type="submit">Salvar Agendamento</button>
+    </form>
+
+    <div id="resultado"></div>
+
+    <script>
+        document.getElementById('formAgendamento').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const dados = {
+                paciente: document.getElementById('paciente').value,
+                telefone: document.getElementById('telefone').value,
+                data: document.getElementById('data').value,
+                hora: document.getElementById('hora').value,
+                local: document.getElementById('local').value,
+                exame: document.getElementById('exame').value,
+                tipoexame: document.getElementById('tipoexame').value
+            };
+
+            const resp = await fetch('/agendar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(dados)
+            });
+
+            const result = document.getElementById('resultado');
+            if (resp.ok) {
+                result.innerHTML = '<p class="success">✅ Agendamento criado com sucesso!</p>';
+                document.getElementById('formAgendamento').reset();
+            } else {
+                const erro = await resp.text();
+                result.innerHTML = `<p class="error">❌ Erro: ${erro}</p>`;
+            }
+        });
+    </script>
+
+</body>
+</html>
