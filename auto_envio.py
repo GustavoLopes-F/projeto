@@ -61,7 +61,7 @@ def enviar_mensagens():
         print(f"📨 Enviando mensagem para {ag.paciente} ({numero})...")
 
         try:
-            # CORREÇÃO: Aumentar wait_time para 20-30 segundos para garantir o carregamento do WhatsApp Web
+            # CORREÇÃO: aumentar wait_time para 20-30 segundos para garantir o carregamento do WhatsApp Web
             pywhatkit.sendwhatmsg_instantly(
                 phone_no=numero,
                 message=mensagem,
@@ -69,24 +69,24 @@ def enviar_mensagens():
                 tab_close=True     # fecha a aba após enviar
             )
 
-            # Marca como enviado
+            # marca como enviado
             ag.enviado = True
             db.commit()
 
             print(f"✅ Mensagem enviada para {ag.paciente}.")
             
-            # PAUSA: Adiciona um pequeno delay entre os envios para evitar sobrecarga e falha de automação
+            # pausa: adiciona um pequeno delay entre os envios para evitar sobrecarga e falha de automação
             time.sleep(5) 
             
         except Exception as e:
-            # Se a automação falhar, o status de 'enviado' não é alterado, e a mensagem será tentada novamente
+            # se a automação falhar, o status de 'enviado' não é alterado, e a mensagem será tentada novamente
             db.rollback() 
             print(f"❌ Erro ao enviar para {ag.paciente}. Tente aumentar o wait_time: {e}")
 
     db.close()
     print("🔁 Fim do ciclo de envio.\n")
 
-# Roda a cada 10 minutos (teste)
+# roda a cada 10 minutos (teste)
 schedule.every(10).minutes.do(enviar_mensagens)
 
 print("🚀 Sistema automático iniciado! Verificando a cada 10 minutos...")
